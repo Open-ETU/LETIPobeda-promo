@@ -1,6 +1,6 @@
-@import "tailwindcss";
 @import "@gravity-ui/uikit/styles/fonts.css";
 @import "@gravity-ui/uikit/styles/styles.css";
+@import "tailwindcss";
 
 @theme {
   --font-family-inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
