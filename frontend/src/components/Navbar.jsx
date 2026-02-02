@@ -7,6 +7,25 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return undefined;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
@@ -21,6 +40,15 @@ export function Navbar() {
         isScrolled ? 'glass-dark py-3' : 'py-5'
       }`}
     >
+      {/* Mobile menu backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       <div className="container-custom flex items-center justify-between px-4 md:px-8">
         {/* Logo */}
         <a
@@ -59,6 +87,7 @@ export function Navbar() {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label={isMobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
           aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-menu"
         >
           {isMobileMenuOpen ? (
             <X className="w-6 h-6" />
@@ -70,7 +99,11 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden glass-dark mt-2 mx-4 rounded-2xl overflow-hidden">
+        <div
+          id="mobile-menu"
+          className="md:hidden glass-dark mt-2 mx-4 rounded-2xl overflow-hidden relative"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="flex flex-col py-4">
             {navLinks.map((link) => (
               <a

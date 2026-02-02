@@ -7,8 +7,11 @@ export function Hero() {
   const [years, setYears] = useState(0);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
     const msPerYear = 365.2425 * 24 * 60 * 60 * 1000;
     const foundationDate = Date.UTC(1886, 5, 3, 0, 0, 0);
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
 
     const updateYears = () => {
       const now = Date.now();
@@ -17,8 +20,11 @@ export function Hero() {
     };
 
     updateYears();
-    const intervalId = setInterval(updateYears, 100);
+    if (prefersReducedMotion) {
+      return undefined;
+    }
 
+    const intervalId = setInterval(updateYears, 250);
     return () => clearInterval(intervalId);
   }, []);
 

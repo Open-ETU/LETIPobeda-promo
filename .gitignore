@@ -193,3 +193,18 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Node / Vite
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+**/.vite/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# macOS
+.DS_Store
