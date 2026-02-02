@@ -88,5 +88,14 @@ jobs:
           YC_BUCKET_NAME: ${{ secrets.YC_BUCKET_NAME }}
         run: |
           set -euo pipefail
+
           yc storage s3 rm "s3://${YC_BUCKET_NAME}/" --recursive || true
           yc storage s3 cp ./dist/ "s3://${YC_BUCKET_NAME}/" --recursive --only-show-errors
+          yc storage s3 cp ./dist/assets/ "s3://${YC_BUCKET_NAME}/assets/" \
+            --recursive --exclude "*" --include "*.css" \
+            --content-type "text/css; charset=utf-8" \
+            --only-show-errors
+          yc storage s3 cp ./dist/assets/ "s3://${YC_BUCKET_NAME}/assets/" \
+            --recursive --exclude "*" --include "*.js" --include "*.mjs" \
+            --content-type "application/javascript; charset=utf-8" \
+            --only-show-errors
