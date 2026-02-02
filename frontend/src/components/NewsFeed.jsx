@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchNews, formatNewsDate, getFallbackNews } from '../lib/news.js';
+import { fetchNews, formatNewsDate, getFallbackNews } from '../data/news.js';
 import { ArrowRight, RefreshCw } from 'lucide-react';
 import { ModalOrDrawer } from './ModalOrDrawer.jsx';
 

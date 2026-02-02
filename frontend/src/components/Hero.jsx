@@ -1,8 +1,27 @@
-import { heroContent, heroStats } from '../lib/content.js';
+import { useEffect, useState } from 'react';
+import { heroContent, heroStats } from '../data/content.js';
 import { StatCard } from './GlassCard.jsx';
 import { ChevronDown, Sparkles, Zap } from 'lucide-react';
 
 export function Hero() {
+  const [years, setYears] = useState(0);
+
+  useEffect(() => {
+    const msPerYear = 365.2425 * 24 * 60 * 60 * 1000;
+    const foundationDate = Date.UTC(1886, 5, 3, 0, 0, 0);
+
+    const updateYears = () => {
+      const now = Date.now();
+      const elapsedYears = (now - foundationDate) / msPerYear;
+      setYears(Math.max(0, elapsedYears));
+    };
+
+    updateYears();
+    const intervalId = setInterval(updateYears, 100);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
       {/* Background elements */}
@@ -32,13 +51,18 @@ export function Hero() {
             </div>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold mb-6 leading-tight">
-              <span className="gradient-text">{heroContent.title}</span>
+              <span className="gradient-text">{heroContent.title}</span>{' '}
+              <span className="inline-flex items-center gap-2 align-middle px-3 py-1 rounded-full glass text-sm md:text-base lg:text-lg font-semibold tracking-wide uppercase text-white/75 whitespace-nowrap leading-none">
+                <span className="text-white/60">уже</span>
+                <span className="tabular-nums">{years.toFixed(8)}</span>
+                <span className="text-white/60">лет</span>
+              </span>
             </h1>
             
-            <p className="text-xl md:text-2xl lg:text-3xl text-white/90 mb-4 font-medium">
+            <p className="text-xl md:text-2xl lg:text-3xl text-white/90 mb-2 font-medium">
               {heroContent.subtitle}
             </p>
-            
+
             <p className="text-lg md:text-xl text-white/60 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
               {heroContent.description}
             </p>

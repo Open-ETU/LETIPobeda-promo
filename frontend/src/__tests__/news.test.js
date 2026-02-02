@@ -5,7 +5,7 @@ import {
   formatNewsDate,
   FEED_CANDIDATES,
   HTML_PAGES,
-} from '../lib/news.js';
+} from '../data/news.js';
 
 describe('news.js', () => {
   describe('normalizeNewsItem', () => {
@@ -26,6 +26,8 @@ describe('news.js', () => {
         date: '2025-01-15',
         source: 'Test Source',
         excerpt: 'Test excerpt content',
+        contentHtml: '',
+        categories: [],
       });
     });
 
@@ -157,11 +159,11 @@ describe('news.js', () => {
       expect(hasLetiToday).toBe(true);
     });
 
-    it('should contain prioritet2030 feeds', () => {
-      const hasPrioritet = FEED_CANDIDATES.some((url) =>
-        url.includes('prioritet2030')
+    it('should contain eltech feeds', () => {
+      const hasEltech = FEED_CANDIDATES.some((url) =>
+        url.includes('eltech.ru')
       );
-      expect(hasPrioritet).toBe(true);
+      expect(hasEltech).toBe(true);
     });
   });
 

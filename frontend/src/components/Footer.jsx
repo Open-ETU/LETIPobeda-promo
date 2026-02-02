@@ -1,4 +1,4 @@
-import { footerContent } from '../lib/content.js';
+import { footerContent } from '../data/content.js';
 import { ExternalLink, ArrowUpRight, GraduationCap } from 'lucide-react';
 
 export function Footer() {

@@ -8,5 +8,9 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    include: [
+      'src/__tests__/**/*.{test,spec}.js',
+      'src/__tests__/**/*.integration.test.js',
+    ],
   },
 })

@@ -12,7 +12,7 @@ import {
   pmiCards,
   communityCards,
   rankCards,
-} from './lib/content.js';
+} from './data/content.js';
 
 function App() {
   return (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { navLinks, heroContent } from '../lib/content.js';
+import { navLinks, heroContent } from '../data/content.js';
 import { Menu, X, ExternalLink } from 'lucide-react';
 
 export function Navbar() {
