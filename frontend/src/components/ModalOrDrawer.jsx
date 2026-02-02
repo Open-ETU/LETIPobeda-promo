@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useId } from 'react';
+import { createPortal } from 'react-dom';
 
 export function ModalOrDrawer({ isOpen, onClose, title, children }) {
   const titleId = useId();
@@ -14,12 +15,14 @@ export function ModalOrDrawer({ isOpen, onClose, title, children }) {
   );
 
   useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -32,7 +35,9 @@ export function ModalOrDrawer({ isOpen, onClose, title, children }) {
 
   if (!isOpen) return null;
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -72,5 +77,6 @@ export function ModalOrDrawer({ isOpen, onClose, title, children }) {
         </div>
       </div>
     </>
+    , document.body
   );
 }

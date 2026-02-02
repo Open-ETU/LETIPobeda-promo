@@ -66,6 +66,26 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  line-height: 1.6;
+  letter-spacing: 0.2px;
+}
+
+/* Text rendering improvements */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+p {
+  line-height: 1.7;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+small, .text-sm, .text-xs {
+  line-height: 1.5;
 }
 
 /* Reduced motion support */
@@ -190,6 +210,8 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+  word-break: break-word;
 }
 
 .gradient-text-gold {
@@ -197,6 +219,8 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+  word-break: break-word;
 }
 
 /* Animated gradient background */
@@ -465,6 +489,38 @@ body {
   background-size: 200px 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: 8px;
+}
+
+/* RSS content formatting */
+.rss-content {
+  display: grid;
+  gap: 12px;
+}
+
+.rss-content p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.rss-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rss-content a {
+  color: #818cf8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.rss-content ul,
+.rss-content ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 6px;
 }
 
 /* Override Gravity UI theme for dark mode */
