@@ -74,7 +74,7 @@ jobs:
           mkdir -p ~/.config/yandex-cloud
           trap 'rm -f ~/.config/yandex-cloud/key.json' EXIT
 
-          printf '%s' "$YC_SERVICE_ACCOUNT_KEY" | base64 -d > ~/.config/yandex-cloud/key.json
+          printf '%s' "$YC_SERVICE_ACCOUNT_KEY" > ~/.config/yandex-cloud/key.json
           chmod 600 ~/.config/yandex-cloud/key.json
 
           python3 -c "import json; json.load(open('/home/runner/.config/yandex-cloud/key.json'))"
