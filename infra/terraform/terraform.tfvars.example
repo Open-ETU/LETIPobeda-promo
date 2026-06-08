@@ -1,0 +1,21 @@
+cloud_id       = "your-cloud-id"
+folder_id      = "your-folder-id"
+certificate_id = "your-certificate-id"
+
+domain_name = "xn--80abjdnrwhz3i.xn--p1ai"
+bucket_name = "xn--80abjdnrwhz3i.xn--p1ai"
+
+terraform_sa_name = "leti-pobeda-terraform-v2"
+
+# Keep false if apex DNS stays in Cloudflare DNS-only mode.
+create_yandex_dns_zone = false
+
+# Set this only if you create or already have a Yandex Cloud DNS zone and
+# want Terraform to create a subdomain CNAME such as www.example.com.
+existing_dns_zone_id = null
+cdn_record_name      = null
+
+labels = {
+  project = "leti-pobeda-promo"
+  managed = "terraform"
+}

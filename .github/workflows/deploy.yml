@@ -1,0 +1,99 @@
+name: Deploy frontend to Yandex Object Storage
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.YC_S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_S3_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ru-central1
+      AWS_EC2_METADATA_DISABLED: "true"
+      YC_BUCKET_NAME: ${{ secrets.YC_BUCKET_NAME }}
+      YC_CDN_RESOURCE_ID: ${{ secrets.YC_CDN_RESOURCE_ID }}
+      YC_CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
+      YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: frontend
+
+      - name: Run tests
+        run: pnpm test
+        working-directory: frontend
+
+      - name: Build frontend
+        run: pnpm build
+        working-directory: frontend
+
+      - name: Sync dist to Object Storage
+        run: |
+          aws --endpoint-url=https://storage.yandexcloud.net \
+            s3 sync frontend/dist/ "s3://${YC_BUCKET_NAME}/" \
+            --delete
+
+      - name: Set cache headers for HTML
+        run: |
+          aws --endpoint-url=https://storage.yandexcloud.net \
+            s3 cp frontend/dist/ "s3://${YC_BUCKET_NAME}/" \
+            --recursive \
+            --exclude "*" \
+            --include "*.html" \
+            --content-type "text/html; charset=utf-8" \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+      - name: Set cache headers for hashed assets
+        run: |
+          if [[ -d frontend/dist/assets ]]; then
+            aws --endpoint-url=https://storage.yandexcloud.net \
+              s3 cp frontend/dist/assets/ "s3://${YC_BUCKET_NAME}/assets/" \
+              --recursive \
+              --cache-control "public, max-age=31536000, immutable"
+          fi
+
+      - name: Install Yandex Cloud CLI
+        if: ${{ secrets.YC_SERVICE_ACCOUNT_KEY != '' && secrets.YC_CDN_RESOURCE_ID != '' }}
+        run: |
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | \
+            bash -s -- -i "$HOME/yandex-cloud" -n
+          echo "$HOME/yandex-cloud/bin" >> "$GITHUB_PATH"
+
+      - name: Purge CDN cache
+        if: ${{ secrets.YC_SERVICE_ACCOUNT_KEY != '' && secrets.YC_CDN_RESOURCE_ID != '' }}
+        run: |
+          printf '%s' '${{ secrets.YC_SERVICE_ACCOUNT_KEY }}' > key.json
+          yc config profile create ci || true
+          yc config set service-account-key key.json
+          yc config set cloud-id "$YC_CLOUD_ID"
+          yc config set folder-id "$YC_FOLDER_ID"
+          yc cdn cache purge --resource-id "$YC_CDN_RESOURCE_ID" --path '/*'
+          rm -f key.json
