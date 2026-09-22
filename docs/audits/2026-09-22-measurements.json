@@ -1,0 +1,282 @@
+{
+  "date": "2026-09-22",
+  "site": "https://xn--80abjdnrwhz3i.xn--p1ai/",
+  "method": "curl GET --compressed --max-time 10; three repetitions per resource; one network vantage; connection reuse not forced; bytes_received is compressed transfer body size",
+  "limitations": [
+    "Not browser LCP or field performance data",
+    "Exact Cloudflare upstream not inspected",
+    "Yandex CDN speed not measured because its Cloudflare Origin CA certificate failed public trust validation"
+  ],
+  "results": [
+    {
+      "target": "domain-html",
+      "run": 1,
+      "exit": 0,
+      "error": "",
+      "status": 200,
+      "ttfb_s": 0.5136,
+      "total_s": 0.513802,
+      "bytes_received": 764,
+      "ip": "172.67.176.123",
+      "headers": {
+        "server": "cloudflare",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "cf-cache-status": "DYNAMIC",
+        "content-encoding": "zstd",
+        "cf-ray": "a3f237227e75b000-ARN"
+      }
+    },
+    {
+      "target": "domain-html",
+      "run": 2,
+      "exit": 0,
+      "error": "",
+      "status": 200,
+      "ttfb_s": 0.355549,
+      "total_s": 0.355726,
+      "bytes_received": 764,
+      "ip": "104.21.31.116",
+      "headers": {
+        "server": "cloudflare",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "cf-cache-status": "DYNAMIC",
+        "content-encoding": "zstd",
+        "cf-ray": "a3f2372559f596b1-ARN"
+      }
+    },
+    {
+      "target": "domain-html",
+      "run": 3,
+      "exit": 0,
+      "error": "",
+      "status": 200,
+      "ttfb_s": 0.355293,
+      "total_s": 0.355865,
+      "bytes_received": 764,
+      "ip": "172.67.176.123",
+      "headers": {
+        "server": "cloudflare",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "cf-cache-status": "DYNAMIC",
+        "content-encoding": "zstd",
+        "cf-ray": "a3f237282e225bd9-ARN"
+      }
+    },
+    {
+      "target": "domain-js",
+      "run": 1,
+      "exit": 28,
+      "error": "curl: (28) Operation timed out after 10000 milliseconds with 20508 bytes received",
+      "status": 200,
+      "ttfb_s": 0.36517,
+      "total_s": 10.000973,
+      "bytes_received": 20508,
+      "ip": "172.67.176.123",
+      "headers": {
+        "server": "cloudflare",
+        "etag": "W/\"5707f5dbc621e1b911d4c42023c80a23\"",
+        "content-encoding": "gzip",
+        "age": "285",
+        "cache-control": "max-age=14400",
+        "cf-cache-status": "HIT",
+        "cf-ray": "a3f23722dc4ade5f-ARN"
+      }
+    },
+    {
+      "target": "domain-js",
+      "run": 2,
+      "exit": 28,
+      "error": "curl: (28) Operation timed out after 10001 milliseconds with 21877 bytes received",
+      "status": 200,
+      "ttfb_s": 0.243212,
+      "total_s": 10.001801,
+      "bytes_received": 21877,
+      "ip": "172.67.176.123",
+      "headers": {
+        "server": "cloudflare",
+        "etag": "W/\"5707f5dbc621e1b911d4c42023c80a23\"",
+        "content-encoding": "gzip",
+        "age": "295",
+        "cache-control": "max-age=14400",
+        "cf-cache-status": "HIT",
+        "cf-ray": "a3f23760dd4843fc-ARN"
+      }
+    },
+    {
+      "target": "domain-js",
+      "run": 3,
+      "exit": 28,
+      "error": "curl: (28) Operation timed out after 10000 milliseconds with 19139 bytes received",
+      "status": 200,
+      "ttfb_s": 0.259716,
+      "total_s": 10.000961,
+      "bytes_received": 19139,
+      "ip": "172.67.176.123",
+      "headers": {
+        "server": "cloudflare",
+        "etag": "W/\"5707f5dbc621e1b911d4c42023c80a23\"",
+        "content-encoding": "gzip",
+        "age": "305",
+        "cache-control": "max-age=14400",
+        "cf-cache-status": "HIT",
+        "cf-ray": "a3f2379f8ed3c3b8-ARN"
+      }
+    },
+    {
+      "target": "domain-css",
+      "run": 1,
+      "exit": 28,
+      "error": "curl: (28) Operation timed out after 10001 milliseconds with 19139 bytes received",
+      "status": 200,
+      "ttfb_s": 0.338955,
+      "total_s": 10.001865,
+      "bytes_received": 19139,
+      "ip": "104.21.31.116",
+      "headers": {
+        "server": "cloudflare",
+        "etag": "W/\"84c315591962811f9a8f829928adaf0a\"",
+        "content-encoding": "gzip",
+        "age": "346",
+        "cache-control": "max-age=14400",
+        "cf-cache-status": "HIT",
+        "cf-ray": "a3f23722abbede5f-ARN"
+      }
+    },
+    {
+      "target": "domain-css",
+      "run": 2,
+      "exit": 28,
+      "error": "curl: (28) Operation timed out after 10001 milliseconds with 21877 bytes received",
+      "status": 200,
+      "ttfb_s": 0.258947,
+      "total_s": 10.001183,
+      "bytes_received": 21877,
+      "ip": "104.21.31.116",
+      "headers": {
+        "server": "cloudflare",
+        "etag": "W/\"84c315591962811f9a8f829928adaf0a\"",
+        "content-encoding": "gzip",
+        "age": "356",
+        "cache-control": "max-age=14400",
+        "cf-cache-status": "HIT",
+        "cf-ray": "a3f23760ee97562f-ARN"
+      }
+    },
+    {
+      "target": "domain-css",
+      "run": 3,
+      "exit": 28,
+      "error": "curl: (28) Operation timed out after 10001 milliseconds with 19139 bytes received",
+      "status": 200,
+      "ttfb_s": 0.258886,
+      "total_s": 10.001798,
+      "bytes_received": 19139,
+      "ip": "104.21.31.116",
+      "headers": {
+        "server": "cloudflare",
+        "etag": "W/\"84c315591962811f9a8f829928adaf0a\"",
+        "content-encoding": "gzip",
+        "age": "366",
+        "cache-control": "max-age=14400",
+        "cf-cache-status": "HIT",
+        "cf-ray": "a3f2379f9f11b148-ARN"
+      }
+    },
+    {
+      "target": "storage-js",
+      "run": 1,
+      "exit": 0,
+      "error": "",
+      "status": 200,
+      "ttfb_s": 0.307854,
+      "total_s": 0.337964,
+      "bytes_received": 93696,
+      "ip": "213.180.193.243",
+      "headers": {
+        "server": "nginx",
+        "etag": "W/\"5707f5dbc621e1b911d4c42023c80a23\"",
+        "content-encoding": "gzip"
+      }
+    },
+    {
+      "target": "storage-js",
+      "run": 2,
+      "exit": 0,
+      "error": "",
+      "status": 200,
+      "ttfb_s": 0.239833,
+      "total_s": 0.274586,
+      "bytes_received": 93696,
+      "ip": "213.180.193.243",
+      "headers": {
+        "server": "nginx",
+        "etag": "W/\"5707f5dbc621e1b911d4c42023c80a23\"",
+        "content-encoding": "gzip"
+      }
+    },
+    {
+      "target": "storage-js",
+      "run": 3,
+      "exit": 0,
+      "error": "",
+      "status": 200,
+      "ttfb_s": 0.271803,
+      "total_s": 0.30713,
+      "bytes_received": 93696,
+      "ip": "213.180.193.243",
+      "headers": {
+        "server": "nginx",
+        "etag": "W/\"5707f5dbc621e1b911d4c42023c80a23\"",
+        "content-encoding": "gzip"
+      }
+    },
+    {
+      "target": "storage-css",
+      "run": 1,
+      "exit": 0,
+      "error": "",
+      "status": 200,
+      "ttfb_s": 0.479777,
+      "total_s": 0.480574,
+      "bytes_received": 24386,
+      "ip": "213.180.193.243",
+      "headers": {
+        "server": "nginx",
+        "etag": "W/\"84c315591962811f9a8f829928adaf0a\"",
+        "content-encoding": "gzip"
+      }
+    },
+    {
+      "target": "storage-css",
+      "run": 2,
+      "exit": 0,
+      "error": "",
+      "status": 200,
+      "ttfb_s": 0.281262,
+      "total_s": 0.282842,
+      "bytes_received": 24386,
+      "ip": "213.180.193.243",
+      "headers": {
+        "server": "nginx",
+        "etag": "W/\"84c315591962811f9a8f829928adaf0a\"",
+        "content-encoding": "gzip"
+      }
+    },
+    {
+      "target": "storage-css",
+      "run": 3,
+      "exit": 0,
+      "error": "",
+      "status": 200,
+      "ttfb_s": 0.260998,
+      "total_s": 0.262741,
+      "bytes_received": 24386,
+      "ip": "213.180.193.243",
+      "headers": {
+        "server": "nginx",
+        "etag": "W/\"84c315591962811f9a8f829928adaf0a\"",
+        "content-encoding": "gzip"
+      }
+    }
+  ]
+}

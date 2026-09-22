@@ -1,99 +1,42 @@
-name: Deploy frontend to Yandex Object Storage
+name: Publish built frontend
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_call:
 
-concurrency:
-  group: deploy-production
-  cancel-in-progress: true
+permissions:
+  contents: read
 
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.YC_S3_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_S3_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ru-central1
-      AWS_EC2_METADATA_DISABLED: "true"
       YC_BUCKET_NAME: ${{ secrets.YC_BUCKET_NAME }}
       YC_CDN_RESOURCE_ID: ${{ secrets.YC_CDN_RESOURCE_ID }}
       YC_CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
       YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
-
+      YC_SERVICE_ACCOUNT_KEY: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
-          version: 9.15.4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-          cache-dependency-path: frontend/pnpm-lock.yaml
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        working-directory: frontend
-
-      - name: Run tests
-        run: pnpm test
-        working-directory: frontend
-
-      - name: Build frontend
-        run: pnpm build
-        working-directory: frontend
-
-      - name: Sync dist to Object Storage
+          name: frontend-dist
+          path: frontend/dist/
+      - name: Install YC CLI
         run: |
-          aws --endpoint-url=https://storage.yandexcloud.net \
-            s3 sync frontend/dist/ "s3://${YC_BUCKET_NAME}/" \
-            --delete
-
-      - name: Set cache headers for HTML
+          curl --fail --silent --show-error --location https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -i "$RUNNER_TEMP/yc" -n
+          echo "$RUNNER_TEMP/yc/bin" >> "$GITHUB_PATH"
+      - name: Publish assets then HTML
+        shell: bash
         run: |
-          aws --endpoint-url=https://storage.yandexcloud.net \
-            s3 cp frontend/dist/ "s3://${YC_BUCKET_NAME}/" \
-            --recursive \
-            --exclude "*" \
-            --include "*.html" \
-            --content-type "text/html; charset=utf-8" \
-            --cache-control "no-cache, no-store, must-revalidate"
-
-      - name: Set cache headers for hashed assets
-        run: |
-          if [[ -d frontend/dist/assets ]]; then
-            aws --endpoint-url=https://storage.yandexcloud.net \
-              s3 cp frontend/dist/assets/ "s3://${YC_BUCKET_NAME}/assets/" \
-              --recursive \
-              --cache-control "public, max-age=31536000, immutable"
-          fi
-
-      - name: Install Yandex Cloud CLI
-        if: ${{ secrets.YC_SERVICE_ACCOUNT_KEY != '' && secrets.YC_CDN_RESOURCE_ID != '' }}
-        run: |
-          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | \
-            bash -s -- -i "$HOME/yandex-cloud" -n
-          echo "$HOME/yandex-cloud/bin" >> "$GITHUB_PATH"
-
-      - name: Purge CDN cache
-        if: ${{ secrets.YC_SERVICE_ACCOUNT_KEY != '' && secrets.YC_CDN_RESOURCE_ID != '' }}
-        run: |
-          printf '%s' '${{ secrets.YC_SERVICE_ACCOUNT_KEY }}' > key.json
-          yc config profile create ci || true
-          yc config set service-account-key key.json
+          set -euo pipefail
+          key_file="$RUNNER_TEMP/leti-deploy-key.json"
+          trap 'rm -f "$key_file"' EXIT
+          printf '%s' "$YC_SERVICE_ACCOUNT_KEY" > "$key_file"
+          chmod 600 "$key_file"
+          yc config set service-account-key "$key_file"
           yc config set cloud-id "$YC_CLOUD_ID"
           yc config set folder-id "$YC_FOLDER_ID"
-          yc cdn cache purge --resource-id "$YC_CDN_RESOURCE_ID" --path '/*'
-          rm -f key.json
+          python3 scripts/deploy-static.py --dist frontend/dist --bucket "$YC_BUCKET_NAME"
+          if [[ -n "$YC_CDN_RESOURCE_ID" ]]; then
+            yc cdn cache purge --resource-id "$YC_CDN_RESOURCE_ID" --path '/' --path '/index.html'
+          fi

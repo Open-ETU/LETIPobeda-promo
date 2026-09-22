@@ -20,9 +20,9 @@ resource "yandex_cdn_resource" "site" {
     gzip_on                = true
 
     # Cache-Control from uploaded objects remains the primary cache policy.
-    # These TTLs are only used as fallback when origin metadata is missing.
+    # Use origin Cache-Control in browsers too; immutable assets retain a one-year TTL.
+    # This edge TTL is only a fallback when origin metadata is missing.
     edge_cache_settings    = 60
-    browser_cache_settings = 60
 
     static_response_headers = {
       x-robots-tag = "all"
