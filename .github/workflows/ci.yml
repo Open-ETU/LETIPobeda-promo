@@ -5,113 +5,49 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Do not interrupt a publication between assets and HTML.
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: 20
-
-      - name: Enable pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.15.4 --activate
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run tests
-        run: pnpm test
-
-  deploy-static:
-    if: github.event_name == 'push'
-    needs: test
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+          version: 9.15.4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-
-      - name: Enable pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.15.4 --activate
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build
-        run: pnpm build
-
-      - name: Install YC CLI
-        run: |
-          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -i /opt/yc -n
-          echo "/opt/yc/bin" >> $GITHUB_PATH
-
-      - name: Configure YC CLI
-        env:
-          YC_SERVICE_ACCOUNT_KEY: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
-          YC_CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
-          YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
-        run: |
-          set -euo pipefail
-          mkdir -p ~/.config/yandex-cloud
-          trap 'rm -f ~/.config/yandex-cloud/key.json' EXIT
-
-          printf '%s' "$YC_SERVICE_ACCOUNT_KEY" > ~/.config/yandex-cloud/key.json
-          chmod 600 ~/.config/yandex-cloud/key.json
-
-          python3 -c "import json; json.load(open('/home/runner/.config/yandex-cloud/key.json'))"
-
-          yc config set service-account-key ~/.config/yandex-cloud/key.json
-          yc config set cloud-id "$YC_CLOUD_ID"
-          yc config set folder-id "$YC_FOLDER_ID"
-
-      - name: Upload to Object Storage
-        env:
-          YC_BUCKET_NAME: ${{ secrets.YC_BUCKET_NAME }}
-        run: |
-          set -euo pipefail
-
-          yc storage s3 rm "s3://${YC_BUCKET_NAME}/" --recursive || true
-
-          yc storage s3 cp ./dist/ "s3://${YC_BUCKET_NAME}/" \
-            --recursive \
-            --exclude "*.html" \
-            --exclude "*.css" \
-            --exclude "*.js" \
-            --exclude "*.mjs" \
-            --only-show-errors
-
-          yc storage s3 cp ./dist/ "s3://${YC_BUCKET_NAME}/" \
-            --recursive \
-            --exclude "*" \
-            --include "*.html" \
-            --content-type "text/html; charset=utf-8" \
-            --cache-control "no-cache, no-store, must-revalidate" \
-            --only-show-errors
-
-          yc storage s3 cp ./dist/assets/ "s3://${YC_BUCKET_NAME}/assets/" \
-            --recursive --exclude "*" --include "*.css" \
-            --content-type "text/css; charset=utf-8" \
-            --only-show-errors
-          yc storage s3 cp ./dist/assets/ "s3://${YC_BUCKET_NAME}/assets/" \
-            --recursive --exclude "*" --include "*.js" --include "*.mjs" \
-            --content-type "application/javascript; charset=utf-8" \
-            --only-show-errors
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm test
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r ../functions/news/requirements.txt
+      - run: python -m unittest discover -s ../functions/news -v
+      - run: python -m unittest discover -s ../scripts -v
+      - run: pnpm build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 14
+  deploy:
+    if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+    needs: validate
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit

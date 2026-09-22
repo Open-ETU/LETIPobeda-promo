@@ -23,7 +23,7 @@ variable "bucket_name" {
 
 variable "certificate_id" {
   type        = string
-  description = "Yandex Certificate Manager certificate ID for the apex domain."
+  description = "Publicly trusted, ISSUED Yandex Certificate Manager certificate for the site. Cloudflare Origin CA is not suitable for direct CDN access."
 }
 
 variable "terraform_sa_name" {

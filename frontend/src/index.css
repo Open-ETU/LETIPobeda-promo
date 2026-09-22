@@ -1,9 +1,8 @@
-@import "@gravity-ui/uikit/styles/fonts.css";
-@import "@gravity-ui/uikit/styles/styles.css";
+@import "@fontsource-variable/inter";
 @import "tailwindcss";
 
 @theme {
-  --font-family-inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-inter: 'Inter Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   
   /* Primary palette - Deep indigo/blue */
   --color-primary-50: #eef2ff;
@@ -491,44 +490,11 @@ small, .text-sm, .text-xs {
   border-radius: 8px;
 }
 
-/* RSS content formatting */
-.rss-content {
-  display: grid;
-  gap: 12px;
-}
-
-.rss-content p {
-  margin: 0;
-  line-height: 1.7;
-}
-
-.rss-content img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.rss-content a {
-  color: #818cf8;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.rss-content ul,
-.rss-content ol {
-  margin: 0;
-  padding-left: 1.2rem;
-  display: grid;
-  gap: 6px;
-}
-
-/* Override Gravity UI theme for dark mode */
-.g-root {
-  --g-color-base-background: transparent;
-  --g-color-base-brand: #6366f1;
-  --g-color-base-brand-hover: #818cf8;
-  --g-color-line-generic: rgba(255, 255, 255, 0.12);
-  --g-color-text-primary: rgba(255, 255, 255, 0.95);
-  --g-color-text-secondary: rgba(255, 255, 255, 0.7);
+/* Avoid continuous decorative animation when motion is reduced. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }

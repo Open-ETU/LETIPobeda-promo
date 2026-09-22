@@ -4,62 +4,19 @@ import { ArrowRight, RefreshCw } from 'lucide-react';
 import { ModalOrDrawer } from './ModalOrDrawer.jsx';
 
 export function NewsFeed() {
-  const [news, setNews] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [news, setNews] = useState(getFallbackNews);
   const [selectedNews, setSelectedNews] = useState(null);
   const [isFallback, setIsFallback] = useState(false);
 
   useEffect(() => {
-    async function loadNews() {
-      try {
-        const { items, isFallback: fallbackUsed } = await fetchNews();
-        if (Array.isArray(items) && items.length > 0) {
-          setNews(items);
-          setIsFallback(fallbackUsed);
-        } else {
-          setNews(getFallbackNews());
-          setIsFallback(true);
-        }
-      } catch (error) {
-        console.error('Failed to load news:', error);
-        setNews(getFallbackNews());
-        setIsFallback(true);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    let isActive = true;
-    const safetyTimeout = setTimeout(() => {
-      if (isActive) {
-        setNews(getFallbackNews());
-        setIsFallback(true);
-        setIsLoading(false);
-      }
-    }, 6000);
-
-    loadNews();
-
-    return () => {
-      isActive = false;
-      clearTimeout(safetyTimeout);
-    };
+    const controller = new AbortController();
+    fetchNews({ signal: controller.signal }).then(({ items, isFallback }) => {
+      if (controller.signal.aborted) return;
+      setNews(items);
+      setIsFallback(isFallback);
+    });
+    return () => controller.abort();
   }, []);
-
-  if (isLoading) {
-    return (
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="glass-card p-6">
-            <div className="skeleton h-4 w-3/4 mb-3" />
-            <div className="skeleton h-3 w-full mb-2" />
-            <div className="skeleton h-3 w-2/3 mb-4" />
-            <div className="skeleton h-3 w-1/3" />
-          </div>
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div>
@@ -150,16 +107,9 @@ export function NewsFeed() {
               {formatNewsDate(selectedNews.date)}
             </div>
 
-            {selectedNews.contentHtml ? (
-              <div
-                className="rss-content text-sm text-white/80"
-                dangerouslySetInnerHTML={{ __html: selectedNews.contentHtml }}
-              />
-            ) : (
-              <p className="text-sm text-white/70 leading-relaxed">
-                {selectedNews.excerpt}
-              </p>
-            )}
+            <p className="text-sm text-white/70 leading-relaxed">
+              {selectedNews.excerpt}
+            </p>
           </div>
         )}
       </ModalOrDrawer>

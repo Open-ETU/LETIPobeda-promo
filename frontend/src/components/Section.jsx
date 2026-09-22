@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
-
 export function Section({
   id,
   title,
@@ -9,39 +7,9 @@ export function Section({
   withBlob = false,
   blobPosition = 'right',
 }) {
-  const sectionRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const currentRef = sectionRef.current;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px',
-      }
-    );
-
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, []);
-
   return (
     <section
       id={id}
-      ref={sectionRef}
       className={`section relative overflow-hidden ${className}`}
     >
       {/* Decorative blob */}
@@ -63,11 +31,7 @@ export function Section({
 
       <div className="container-custom relative z-10">
         {(title || subtitle) && (
-          <div
-            className={`text-center mb-12 md:mb-16 transition-all duration-700 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
+          <div className="text-center mb-12 md:mb-16">
             {title && (
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
                 {title}
@@ -81,13 +45,7 @@ export function Section({
           </div>
         )}
 
-        <div
-          className={`transition-all duration-700 delay-200 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
-          {children}
-        </div>
+        <div>{children}</div>
       </div>
     </section>
   );
