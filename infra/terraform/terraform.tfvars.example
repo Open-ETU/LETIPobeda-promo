@@ -1,6 +1,6 @@
 cloud_id       = "your-cloud-id"
 folder_id      = "your-folder-id"
-certificate_id = "your-certificate-id"
+certificate_id = "fpq84vjsbj3aabs537b7" # Public managed DNS certificate (apex + www)
 
 domain_name = "xn--80abjdnrwhz3i.xn--p1ai"
 bucket_name = "xn--80abjdnrwhz3i.xn--p1ai"

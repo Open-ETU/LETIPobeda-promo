@@ -10,6 +10,7 @@ resource "yandex_cdn_origin_group" "site" {
 resource "yandex_cdn_resource" "site" {
   cname           = var.domain_name
   active          = true
+  secondary_hostnames = ["www.${var.domain_name}"]
   origin_protocol = "http"
   origin_group_id = yandex_cdn_origin_group.site.id
   labels          = var.labels

@@ -80,10 +80,11 @@ curl --fail --compressed --max-time 15 \
 ```
 
 Выпущен managed HTTP-сертификат основного домена `fpqa86k1mgjqc3tvq305`.
-Дополнительно запрошен managed DNS-сертификат apex + www `fpq84vjsbj3aabs537b7`.
+Выпущен и подключён managed DNS-сертификат apex + www `fpq84vjsbj3aabs537b7`.
 Записи `_acme-challenge` и `_acme-challenge.www` в Cloudflare указывают
 на `fpq84vjsbj3aabs537b7.cm.yandexcloud.net` в режиме DNS only для автоматического
-продления. Подключать этот сертификат и переключать www можно после `ISSUED`.
+продления. Перед переключением DNS нужно дождаться распространения сертификата
+на узлы CDN и проверить оба имени с обычной TLS-валидацией.
 Cloudflare Origin CA не подходит для прямых посетителей CDN.
 
 ## Откат
