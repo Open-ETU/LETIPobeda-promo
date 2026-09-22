@@ -38,5 +38,7 @@ jobs:
           yc config set folder-id "$YC_FOLDER_ID"
           python3 scripts/deploy-static.py --dist frontend/dist --bucket "$YC_BUCKET_NAME"
           if [[ -n "$YC_CDN_RESOURCE_ID" ]]; then
-            yc cdn cache purge --resource-id "$YC_CDN_RESOURCE_ID" --path '/' --path '/index.html'
+            if ! yc cdn cache purge --resource-id "$YC_CDN_RESOURCE_ID" --path '/' --path '/index.html'; then
+              echo '::warning::HTML published. CDN purge unavailable; the 60-second HTML cache will expire normally.'
+            fi
           fi
